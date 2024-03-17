@@ -2,6 +2,8 @@
 
 import Link from "next/link"
 import { FC } from "react"
+import {Button} from "@nextui-org/react";
+import { registerServiceWorker } from "@/utils/registerServiceWorker";
 
 // Root
 const Root:FC = () => {
@@ -10,7 +12,12 @@ const Root:FC = () => {
       <div>Root</div>
       <div>ろぐいんとか</div>
       <div>
-        <Link href={"/hoge"}>mainページへ</Link>
+        <Link href={"/hoge"}>
+          <Button color="primary">
+            main
+          </Button>
+        </Link>
+        <Button onClick={async ()=> {await registerServiceWorker()}}>sw</Button>
       </div>
     </div>
   )
