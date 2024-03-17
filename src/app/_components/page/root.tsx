@@ -1,78 +1,24 @@
 'use client'
 
-import { FC } from "react"
-import { useEffect, useState } from 'react';
+import type { FC } from "react"
+import { useState } from 'react';
 import {
-  getAuth,
-  Auth,
-  GithubAuthProvider,
-  signInWithPopup,
-  getAdditionalUserInfo,
   AdditionalUserInfo,
-} from 'firebase/auth';
-import { firebaseApp } from "@/lib/FirebaseConfig";
-import { userAgent } from "next/server";
-
-const OWNER = "shu20031026"
-const REPO = "brachio-front"
+} from "firebase/auth";
+import { handleSignInClick } from "@/lib/firebaseAction";
 
 // Root
 const Root:FC = () => {
-  const [token, setToken] = useState<string | null>(null);
-  const [auth, setAuth] = useState<Auth | null>(null);
-  const [provider, setProvider] = useState<GithubAuthProvider | null>(null);
   const [details, setDetails] = useState<AdditionalUserInfo | null>(null); 
-
-
-  useEffect(() => {
-    if (provider === null) {
-      const newProvider = new GithubAuthProvider();
-      newProvider.addScope('repo'); 
-      setProvider(newProvider);
-    }
-  }, [provider]);
-
-  useEffect(() => {
-    if (provider !== null && auth === null) {
-      setAuth(getAuth(firebaseApp));
-      console.log(auth);
-    }
-  }, [auth, provider]);
-
-  useEffect(() => {
-    if (provider !== null && auth !== null && token === null) {
-      signInWithPopup(auth, provider).then((result) => {
-        setDetails(getAdditionalUserInfo(result));
-        const credential = GithubAuthProvider.credentialFromResult(result);
-        if (credential && credential.accessToken) {
-          setToken(credential.accessToken);
-          console.log('token: ' + credential.accessToken);
-        }
-        console.log(result.user);
-        
-      });
-    }
-  }, [auth, provider, token]);
-
-  useEffect(() => {
-    if (token !== null) {
-      fetch(`https://api.github.com/repos/${OWNER}/${REPO}/issues`, {
-        headers: {
-          Authorization: `token ${token}`,
-          Accept: 'application / vnd.github.v3 + json',
-        },
-      }).then((result) => {
-        result.json().then((result) => {
-          console.log(result);
-        });
-      });
-    }
-  }, [token]);
 
   return (
     <div className="w-full h-screen overflow-hidden">
       <div>Root</div>
       <div>ろぐいんとか</div>
+      <div className="">
+        <div><button onClick={() => handleSignInClick(details, setDetails)} className="p-2 pl-4 pr-4 rounded-xl font-bold bg-orange-400">サインイン</button></div>
+        {/* <div><button onClick={} className="p-2 pl-4 pr-4 rounded-xl font-bold bg-orange-400">サインアップ</button></div> */}
+      </div>
       <div>{details?.username}</div>
     </div>
   )
