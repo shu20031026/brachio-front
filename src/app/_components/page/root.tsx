@@ -7,8 +7,11 @@ import {
   Auth,
   GithubAuthProvider,
   signInWithPopup,
+  getAdditionalUserInfo,
+  AdditionalUserInfo,
 } from 'firebase/auth';
 import { firebaseApp } from "@/lib/FirebaseConfig";
+import { userAgent } from "next/server";
 
 const OWNER = "shu20031026"
 const REPO = "brachio-front"
@@ -18,6 +21,8 @@ const Root:FC = () => {
   const [token, setToken] = useState<string | null>(null);
   const [auth, setAuth] = useState<Auth | null>(null);
   const [provider, setProvider] = useState<GithubAuthProvider | null>(null);
+  const [details, setDetails] = useState<AdditionalUserInfo | null>(null); 
+
 
   useEffect(() => {
     if (provider === null) {
@@ -37,12 +42,14 @@ const Root:FC = () => {
   useEffect(() => {
     if (provider !== null && auth !== null && token === null) {
       signInWithPopup(auth, provider).then((result) => {
+        setDetails(getAdditionalUserInfo(result));
         const credential = GithubAuthProvider.credentialFromResult(result);
         if (credential && credential.accessToken) {
           setToken(credential.accessToken);
           console.log('token: ' + credential.accessToken);
         }
         console.log(result.user);
+        
       });
     }
   }, [auth, provider, token]);
@@ -66,6 +73,7 @@ const Root:FC = () => {
     <div className="w-full h-screen overflow-hidden">
       <div>Root</div>
       <div>ろぐいんとか</div>
+      <div>{details?.username}</div>
     </div>
   )
 }
