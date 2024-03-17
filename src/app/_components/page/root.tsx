@@ -1,10 +1,13 @@
 'use client'
 
 import type { FC } from "react"
+import Link from "next/link"
+import {Button} from "@nextui-org/react";
 import { useState } from 'react';
 import {
-  AdditionalUserInfo,
+AdditionalUserInfo,
 } from "firebase/auth";
+import { registerServiceWorker } from "@/utils/registerServiceWorker";
 import { handleSignInClick } from "@/lib/firebaseAction";
 
 // Root
@@ -15,11 +18,18 @@ const Root:FC = () => {
     <div className="w-full h-screen overflow-hidden">
       <div>Root</div>
       <div>ろぐいんとか</div>
-      <div className="">
-        <div><button onClick={() => handleSignInClick(details, setDetails)} className="p-2 pl-4 pr-4 rounded-xl font-bold bg-orange-400">サインイン</button></div>
-        {/* <div><button onClick={} className="p-2 pl-4 pr-4 rounded-xl font-bold bg-orange-400">サインアップ</button></div> */}
-      </div>
+
+      <div><button onClick={() => handleSignInClick(details, setDetails)} className="p-2 pl-4 pr-4 rounded-xl font-bold bg-orange-400">サインイン</button></div>
       <div>{details?.username}</div>
+
+      <div>
+        <Link href={"/hoge"}>
+          <Button color="primary">
+            main
+          </Button>
+        </Link>
+        <Button onClick={async ()=> {await registerServiceWorker()}}>sw</Button>
+      </div>
     </div>
   )
 }

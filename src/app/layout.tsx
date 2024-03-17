@@ -1,12 +1,53 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { UiProvider } from "./_components/provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
+const APP_NAME = "言語ねこ";
+const APP_DEFAULT_TITLE = "言語ねこ";
+const APP_TITLE_TEMPLATE = "言語ねこ";
+const APP_DESCRIPTION = "言語ねこ";
+
 export const metadata: Metadata = {
-  title: "Brachio-app",
-  description: "ハックツハッカソンブラキオ杯 田中1号",
+  applicationName: APP_NAME,
+  title: {
+    default: APP_DEFAULT_TITLE,
+    template: APP_TITLE_TEMPLATE,
+  },
+  description: APP_DESCRIPTION,
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: APP_DEFAULT_TITLE,
+    // startUpImage: [],
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  openGraph: {
+    type: "website",
+    siteName: APP_NAME,
+    title: {
+      default: APP_DEFAULT_TITLE,
+      template: APP_TITLE_TEMPLATE,
+    },
+    description: APP_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary",
+    title: {
+      default: APP_DEFAULT_TITLE,
+      template: APP_TITLE_TEMPLATE,
+    },
+    description: APP_DESCRIPTION,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor:"#31a14e",
 };
 
 export default function RootLayout({
@@ -15,8 +56,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="jp">
-      <body className={inter.className}>{children}</body>
+    <html lang="en">
+      <body className={inter.className}>
+      <UiProvider>{children}</UiProvider>
+      </body>
     </html>
   );
 }
