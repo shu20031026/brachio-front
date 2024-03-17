@@ -19,7 +19,7 @@ const Root:FC = () => {
       <div>Root</div>
       <div>ろぐいんとか</div>
 
-      <div><button onClick={() => handleSignInClick(details, setDetails)} className="p-2 pl-4 pr-4 rounded-xl font-bold bg-orange-400">サインイン</button></div>
+      <Button color="primary" onClick={() => handleSignInClick(details, setDetails)}>サインイン</Button>
       <div>{details?.username}</div>
 
       <div>
