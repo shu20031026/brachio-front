@@ -7,17 +7,15 @@ import * as THREE from 'three'
 import Basic from '../basic'
 import { Button } from '@nextui-org/react'
 
-const isIos = () => {
-  const ua = navigator.userAgent.toLowerCase();
-  return (
-    ua.indexOf("iphone") >= 0 ||
-    ua.indexOf("ipad") >= 0 ||
-    ua.indexOf("ipod") >= 0
-  );
-};
+import { isIos } from '@/lib/isIos'
+
+type Props = {
+  param:string
+}
 
 // メイン
-const Main:FC = () => {
+const Main:FC<Props> = ({...props}) => {
+  const {param} = props
   const [deviceOrientation, setDeviceOrientation]= useState<DeviceOrientationEvent | null>(null)
 
   const requestDeviceOrientationPermission = () => {
@@ -45,6 +43,7 @@ const Main:FC = () => {
 
   return (
     <div className="w-full h-screen overflow-hidden">
+      <div>{param}</div>
       <Button onClick={()=>requestDeviceOrientationPermission()}>motion</Button>
       <StrictMode>
         <Canvas
