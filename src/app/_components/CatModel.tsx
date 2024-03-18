@@ -1,7 +1,7 @@
 import { FC, useState, useEffect } from "react"
 import { Html} from "@react-three/drei"
 import { GLTFLoader, GLTF, GLTFParser } from 'three/addons/loaders/GLTFLoader.js';
-import { VRMLoaderPlugin } from "@pixiv/three-vrm"
+import { VRMLoaderPlugin } from '@pixiv/three-vrm';
 
 
 const CatModel: FC = () => {
