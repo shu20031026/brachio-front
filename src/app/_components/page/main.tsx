@@ -1,16 +1,51 @@
 'use client'
 
-import { FC, StrictMode } from 'react'
-import { Canvas } from '@react-three/fiber'
+import { FC, StrictMode, useRef, useState } from 'react'
+import { Canvas, useThree } from '@react-three/fiber'
 
 import * as THREE from 'three'
 import Basic from '../basic'
+import { DeviceOrientationControls as DeviceOrientationControlsImpl } from "@react-three/drei";
+
+const isIos = () => {
+  const ua = navigator.userAgent.toLowerCase();
+  return (
+    ua.indexOf("iphone") >= 0 ||
+    ua.indexOf("ipad") >= 0 ||
+    ua.indexOf("ipod") >= 0
+  );
+};
 
 // メイン
 const Main:FC = () => {
+  const [deviceOrientation, setDeviceOrientation]= useState<DeviceOrientationEvent | null>(null)
+
+  const requestDeviceOrientationPermission = () => {
+    if (
+      isIos() &&
+      DeviceOrientationEvent &&
+      // @ts-ignore
+      typeof DeviceOrientationEvent.requestPermission === "function"
+    ) {
+      // @ts-ignore
+      DeviceOrientationEvent.requestPermission()
+        .then((permissionState: string) => {
+          if (permissionState === "granted") {
+            window.addEventListener(
+              "deviceorientation",
+              (e: DeviceOrientationEvent) => {
+                setDeviceOrientation(e)
+              }
+            );
+          }
+        })
+        .catch(console.error);
+    }
+  };
+
   return (
     <div className="w-full h-screen overflow-hidden">
-      <div>hogehoge</div>
+      <button onClick={()=>requestDeviceOrientationPermission()}>motion</button>
       <StrictMode>
         <Canvas
           flat
@@ -26,7 +61,7 @@ const Main:FC = () => {
             position: [0, 0, 4],
           }}
         >
-          <Basic />
+          <Basic deviceEvent={deviceOrientation}/>
         </Canvas>
       </StrictMode>
     </div>

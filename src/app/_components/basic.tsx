@@ -1,14 +1,13 @@
 'use client'
 
-import { useRef } from 'react'
-import { Perf } from 'r3f-perf'
-import { OrbitControls, useHelper } from '@react-three/drei'
+import { FC, useRef } from 'react'
+import { DeviceOrientationControls, OrbitControls, useHelper } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 
 import * as THREE from 'three'
 
 // 基本
-const Basic = () => {
+const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
   const directionalLight = useRef<THREE.DirectionalLight>(null)
   const boxRef = useRef<THREE.Mesh>(null)
 
@@ -35,9 +34,10 @@ const Basic = () => {
     <>
       {/* コントロール */}
       <OrbitControls makeDefault />
+      <DeviceOrientationControls  />
 
       {/* モニター */}
-      <Perf position="top-right" />
+      {/* <Perf position="top-right" /> */}
 
       {/* 背景 */}
       <color args={['ivory']} attach="background" />
