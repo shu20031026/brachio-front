@@ -1,46 +1,33 @@
 'use client'
 
-import { FC, useEffect, useRef } from 'react'
+import { FC, useRef } from 'react'
 import { DeviceOrientationControls, OrbitControls, useHelper } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 
 import * as THREE from 'three'
-import useWebcamBackground from './videoTexture'
-import CatModel from './CatModel'
+import CharacterModel from './CharacterModel'
+import { useLookAtCenter } from '@/hooks/useLookAtCenter'
+import { useSceneBackground } from '@/hooks/useSceneBackground'
+import { useLightHelper } from '@/hooks/useLightHelper'
 
 // 基本
 const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
-  const directionalLight = useRef<THREE.DirectionalLight>(null)
   const boxRef = useRef<THREE.Mesh>(null)
   const catRef = useRef<THREE.Mesh>(null)
-  const { scene } = useThree();
-
-  const videoTexture = useWebcamBackground();
-
-  useEffect(() => {
-    scene.children.forEach((child) => {
-      if (child instanceof THREE.Mesh) {
-        child.lookAt(new THREE.Vector3(0, child.position.y, 0));
-      }
-    });
-  }, [scene]);
-
-  useEffect(() => {
-    if (videoTexture) {
-      scene.background = videoTexture;
-    }
-  }, [videoTexture, scene]);
+  useSceneBackground();
+  useLookAtCenter();
+  const { directionalLight } = useLightHelper();
 
   const catModels = [];
-  const radius = 4; // 猫を配置する円の半径
-  const numCats = 1; // 猫の数
+  const radius = 4; // 鳥を配置する円の半径
+  const numCats = 3; // 鳥の数
   for (let i = 0; i < numCats; i++) {
-    const angle = (i / numCats) * 2 * Math.PI; // 各猫の位置を決定する角度
+    const angle = (i / numCats) * 2 * Math.PI; // 各鳥の位置を決定する角度
     const x = Math.cos(angle) * radius;
     const z = Math.sin(angle) * radius;
     catModels.push(
       <mesh key={i} position={[x, 0, z]} >
-        <CatModel />
+        <CharacterModel vrmFile='/bananaCat.vrm' />
       </mesh>
     );
   }
@@ -75,9 +62,6 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
       {/* コントロール */}
       <OrbitControls makeDefault />
       <DeviceOrientationControls  />
-
-      {/* モニター */}
-      {/* <Perf position="top-right" /> */}
 
       {/* 背景 */}
       <color args={['ivory']} attach="background" />
