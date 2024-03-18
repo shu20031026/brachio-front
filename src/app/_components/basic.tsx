@@ -18,10 +18,32 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
   const videoTexture = useWebcamBackground();
 
   useEffect(() => {
+    scene.children.forEach((child) => {
+      if (child instanceof THREE.Mesh) {
+        child.lookAt(new THREE.Vector3(0, child.position.y, 0));
+      }
+    });
+  }, [scene]);
+
+  useEffect(() => {
     if (videoTexture) {
       scene.background = videoTexture;
     }
   }, [videoTexture, scene]);
+
+  const catModels = [];
+  const radius = 4; // 猫を配置する円の半径
+  const numCats = 1; // 猫の数
+  for (let i = 0; i < numCats; i++) {
+    const angle = (i / numCats) * 2 * Math.PI; // 各猫の位置を決定する角度
+    const x = Math.cos(angle) * radius;
+    const z = Math.sin(angle) * radius;
+    catModels.push(
+      <mesh key={i} position={[x, 0, z]} >
+        <CatModel />
+      </mesh>
+    );
+  }
 
   // ダイレクト光のヘルパー
   useHelper(
@@ -36,13 +58,13 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
     const time = state.clock.elapsedTime
     if (boxRef.current) {
       // X移動
-      boxRef.current.position.x = Math.sin(time) + 1.5
+      boxRef.current.position.x = Math.sin(time) + 1
       // Y回転
       boxRef.current.rotation.y += delta
     }
     if (catRef.current) {
       // X移動
-      catRef.current.position.x = Math.sin(time) + 1.5
+      catRef.current.position.x = Math.sin(time) + 1
       // Y回転
       catRef.current.rotation.y += delta
      }  
@@ -72,29 +94,8 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
         shadow-mapSize={[1024, 1024]}
       />
 
-      <group position={[0, -1, 0]}>
-        {/* 球体 */}
-        <mesh castShadow position={[-1, 0.6, 0]} scale={0.6}>
-          <sphereGeometry />
-          <meshStandardMaterial color="orange" />
-        </mesh>
-
-        {/* 箱 */}
-        <mesh castShadow position={[1, 0.5, 0]} ref={boxRef}>
-          <boxGeometry />
-          <meshStandardMaterial color="mediumpurple" />
-        </mesh>
-
-        {/* 猫 */}
-        <mesh position={[1, 1, 0]} ref={catRef}>
-          <CatModel />
-        </mesh>
-
-        {/* 平面 */}
-        {/* <mesh receiveShadow rotation-x={-Math.PI * 0.5} scale={10}>
-          <planeGeometry />
-          <meshStandardMaterial color="lightseagreen" />
-        </mesh> */}
+      <group rotation={[0, 0, 0]} position={[0, 0, 0]}>
+        {catModels}
       </group>
     </>
   )

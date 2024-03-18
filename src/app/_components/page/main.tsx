@@ -57,7 +57,7 @@ const Main:FC = () => {
             fov: 45,
             near: 0.1,
             far: 100,
-            position: [0, 0, 4],
+            position: [0, 0, 0],
           }}
         >
           <Basic deviceEvent={deviceOrientation}/>

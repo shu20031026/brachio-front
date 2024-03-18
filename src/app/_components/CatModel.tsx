@@ -16,7 +16,7 @@ const CatModel: FC = () => {
       })
 
       loader.load(
-        "/bananaCat.vrm",
+        "/shiro.vrm",
         (tmpGltf: GLTF) => {
           setGltf(tmpGltf)
           console.log("loaded")
