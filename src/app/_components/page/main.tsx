@@ -1,11 +1,10 @@
 'use client'
 
 import { FC, StrictMode, useRef, useState } from 'react'
-import { Canvas, useThree } from '@react-three/fiber'
+import { Canvas } from '@react-three/fiber'
 
 import * as THREE from 'three'
 import Basic from '../basic'
-import { DeviceOrientationControls as DeviceOrientationControlsImpl } from "@react-three/drei";
 
 const isIos = () => {
   const ua = navigator.userAgent.toLowerCase();
