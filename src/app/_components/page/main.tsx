@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, StrictMode, useRef, useState } from 'react'
+import { FC, StrictMode, useEffect, useRef, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 
 import * as THREE from 'three'

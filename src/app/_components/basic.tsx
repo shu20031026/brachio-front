@@ -1,15 +1,25 @@
 'use client'
 
-import { FC, useRef } from 'react'
+import { FC, useEffect, useRef } from 'react'
 import { DeviceOrientationControls, OrbitControls, useHelper } from '@react-three/drei'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 
 import * as THREE from 'three'
+import useWebcamBackground from './videoTexture'
 
 // 基本
 const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
   const directionalLight = useRef<THREE.DirectionalLight>(null)
   const boxRef = useRef<THREE.Mesh>(null)
+  const { scene } = useThree();
+
+  const videoTexture = useWebcamBackground();
+
+  useEffect(() => {
+    if (videoTexture) {
+      scene.background = videoTexture;
+    }
+  }, [videoTexture, scene]);
 
   // ダイレクト光のヘルパー
   useHelper(
@@ -68,10 +78,10 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
         </mesh>
 
         {/* 平面 */}
-        <mesh receiveShadow rotation-x={-Math.PI * 0.5} scale={10}>
+        {/* <mesh receiveShadow rotation-x={-Math.PI * 0.5} scale={10}>
           <planeGeometry />
           <meshStandardMaterial color="lightseagreen" />
-        </mesh>
+        </mesh> */}
       </group>
     </>
   )
