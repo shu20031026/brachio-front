@@ -5,6 +5,7 @@ import { Canvas } from '@react-three/fiber'
 
 import * as THREE from 'three'
 import Basic from '../basic'
+import { Button } from '@nextui-org/react'
 
 const isIos = () => {
   const ua = navigator.userAgent.toLowerCase();
@@ -44,7 +45,7 @@ const Main:FC = () => {
 
   return (
     <div className="w-full h-screen overflow-hidden">
-      <button onClick={()=>requestDeviceOrientationPermission()}>motion</button>
+      <Button onClick={()=>requestDeviceOrientationPermission()}>motion</Button>
       <StrictMode>
         <Canvas
           flat

@@ -2,9 +2,14 @@ import { FC, useState, useEffect } from "react"
 import { Html} from "@react-three/drei"
 import { GLTFLoader, GLTF, GLTFParser } from 'three/addons/loaders/GLTFLoader.js';
 import { VRMLoaderPlugin } from '@pixiv/three-vrm';
+import { CircularProgress } from "@nextui-org/react";
 
+type Props = {
+  vrmFile:string
+}
 
-const CatModel: FC = () => {
+const CharacterModel: FC<Props> = ({...props}) => {
+  const {vrmFile} = props
   const [gltf, setGltf] = useState<GLTF>()
   const [progress, setProgress] = useState<number>(0)
 
@@ -16,7 +21,7 @@ const CatModel: FC = () => {
       })
 
       loader.load(
-        "/shiro.vrm",
+        vrmFile,
         (tmpGltf: GLTF) => {
           setGltf(tmpGltf)
           console.log("loaded")
@@ -33,17 +38,20 @@ const CatModel: FC = () => {
         }
       )
     }
-  }, [gltf])
+  }, [gltf, vrmFile])
 
   return (
     <>
       {gltf ? (
         <primitive object={gltf.scene} />
       ) : (
-        <Html center>{progress} % loaded</Html>
+        <Html center>
+          <div>{progress}%</div>
+          <CircularProgress color="primary" aria-label="Loading..." value={progress}/>
+        </Html>
       )}
     </>
   )
 }
 
-export default CatModel
+export default CharacterModel
