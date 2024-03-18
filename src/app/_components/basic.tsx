@@ -6,11 +6,13 @@ import { useFrame, useThree } from '@react-three/fiber'
 
 import * as THREE from 'three'
 import useWebcamBackground from './videoTexture'
+import CatModel from './CatModel'
 
 // 基本
 const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
   const directionalLight = useRef<THREE.DirectionalLight>(null)
   const boxRef = useRef<THREE.Mesh>(null)
+  const catRef = useRef<THREE.Mesh>(null)
   const { scene } = useThree();
 
   const videoTexture = useWebcamBackground();
@@ -38,6 +40,12 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
       // Y回転
       boxRef.current.rotation.y += delta
     }
+    if (catRef.current) {
+      // X移動
+      catRef.current.position.x = Math.sin(time) + 1.5
+      // Y回転
+      catRef.current.rotation.y += delta
+     }  
   })
 
   return (
@@ -75,6 +83,11 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
         <mesh castShadow position={[1, 0.5, 0]} ref={boxRef}>
           <boxGeometry />
           <meshStandardMaterial color="mediumpurple" />
+        </mesh>
+
+        {/* 猫 */}
+        <mesh position={[1, 1, 0]} ref={catRef}>
+          <CatModel />
         </mesh>
 
         {/* 平面 */}
