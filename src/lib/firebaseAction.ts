@@ -44,7 +44,7 @@ export const handleSignInClick = (details: AdditionalUserInfo | null, setDetails
       //@ts-ignore
       if (process.widow){
       //@ts-ignore
-        document.cookie = `token=${result.user.accessToken};path=/;max-age=3600;secure`;
+        document.cookie = `token=${result.user.accessToken};path=/;max-age=3600;`;
       }
     })
     .catch((error) => {

@@ -12,7 +12,7 @@ import { handleSignInClick } from "@/lib/firebaseAction";
 import getCookieValue from "@/lib/cookie";
 
 //@ts-ignore
-const token = (typeof window === "object") ? getCookieValue("token") : "hoge"
+const token = (typeof window === "object") ? getCookieValue("token") : "error"
 
 // Root
 const Root:FC = () => {
