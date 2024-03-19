@@ -7,12 +7,9 @@ import * as THREE from 'three'
 import Basic from '../basic'
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Progress } from '@nextui-org/react'
 
-import { isIos } from '@/lib/isIos'
-import { langColorList } from '@/lib/lang'
 import { useAtom } from 'jotai'
 import { CURRENT_MODAL, USER_DATA_ATOM } from '@/stores/atoms'
 import { DUMMY_USER_DATA } from '../../../../mock/userdata'
-import router from 'next/router'
 
 type Props = {
   param:string
