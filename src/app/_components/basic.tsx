@@ -1,87 +1,89 @@
 'use client'
 
 import { FC, useRef, useState } from 'react'
-import { DeviceOrientationControls, OrbitControls, useHelper } from '@react-three/drei'
+import { DeviceOrientationControls, OrbitControls, Text } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 
 import * as THREE from 'three'
 import CharacterModel from './CharacterModel'
 import { useLookAtCenter } from '@/hooks/useLookAtCenter'
 import { useSceneBackground } from '@/hooks/useSceneBackground'
-import { useLightHelper } from '@/hooks/useLightHelper'
 import { CURRENT_MODAL, USER_DATA_ATOM } from '@/stores/atoms'
 import { useAtom } from 'jotai'
 import { Pet } from '@/interfaces/types'
+import { friendshipGage } from '@/lib/friendshipGage'
 
 // 基本
-const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
-  const boxRef = useRef<THREE.Mesh>(null)
-  const catRef = useRef<THREE.Mesh>(null)
+const Basic: FC<{ deviceEvent: DeviceOrientationEvent | null }> = ({ deviceEvent }) => {
   const birdRef = useRef<THREE.Mesh>(null)
   useSceneBackground();
   useLookAtCenter();
-  const { directionalLight } = useLightHelper();
   const [currentModalContent, setCurrentModalContent] = useAtom(CURRENT_MODAL)
   const [userData, setUserData] = useAtom(USER_DATA_ATOM)
-  const [happyFlag, setHappyFlag] = useState(false)
+  const { camera, scene } = useThree();
 
-  const touchPetHandler = (pet:Pet) =>{
-    setCurrentModalContent(pet)
-    setHappyFlag(true)
+  const [grassAnimation, setGrassAnimation] = useState<{ sphere: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial> | null, targetPosition: THREE.Vector3, isActive: boolean }>({ sphere: null, targetPosition: new THREE.Vector3(), isActive: false });
+
+  const [happyFlag, setHappyFlag] = useState(false)
+  const [happyPetId, setHappyPetId] = useState<string | null>(null);
+
+  const RADIUS = 2.5
+
+  const touchPetHandler = (pet: Pet, grassPosition: THREE.Vector3) => {
+    //モーダル
+    // setCurrentModalContent(pet)
+
+    // ジャンプ
+    setHappyPetId(pet.Language);
+
+    // 草の生成
+    const sphereGeometry = new THREE.SphereGeometry(0.05, 32, 32);
+    const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0X006400 });
+    const newSphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    newSphere.position.copy(camera.position);
+    scene.add(newSphere);
+
+    setGrassAnimation({ sphere: newSphere, targetPosition: grassPosition, isActive: true });
   }
 
-  // const catModels = [];
-  // const radius = 4; // 鳥を配置する円の半径
-  // const numCats = 3; // 鳥の数
-  // for (let i = 0; i < numCats; i++) {
-  //   const angle = (i / numCats) * 2 * Math.PI; // 各鳥の位置を決定する角度
-  //   const x = Math.cos(angle) * radius;
-  //   const z = Math.sin(angle) * radius;
-  //   catModels.push(
-  //     <mesh key={i} position={[x, 0, z]} >
-  //       <CharacterModel vrmFile='/shiro.vrm' onClickEvent={touchPetHandler}/>
-  //     </mesh>
-  //   );
-  // }
-
-  // ダイレクト光のヘルパー
-  // useHelper(
-  //   directionalLight as React.MutableRefObject<THREE.DirectionalLight>,
-  //   THREE.DirectionalLightHelper,
-  //   1,
-  //   ''
-  // )
-
   useFrame((state, delta) => {
-    // 経過時間
-    const time = state.clock.elapsedTime
-    if (boxRef.current) {
-      // X移動
-      boxRef.current.position.x = Math.sin(time) + 1
-      // Y回転
-      boxRef.current.rotation.y += delta
+    userData?.pets.forEach((pet, i) => {
+      const numCats = userData.pets.length;
+      const angle = (i / numCats) * 2 * Math.PI;
+      const x = Math.cos(angle) * RADIUS;
+      const z = Math.sin(angle) * RADIUS;
+
+      const petMesh = scene.getObjectByName(pet.Language);
+      if (petMesh && pet.Language === happyPetId && happyFlag) {
+        const time = state.clock.elapsedTime;
+        const y1 = Math.sin(time * 5) * 0.5 + 1;
+        const y2 = Math.sin((time - 0.5) * 5) * 0.5 + 1;
+        petMesh.position.y = y1 - 1;
+        petMesh.position.y = y2 - 1;
+        setTimeout(() => {
+          setHappyFlag(false);
+        }, 3000);
+      } else if (petMesh) {
+        petMesh.position.y = 0; // クリックされていないペットは元の位置に
+      }
+    });
+  });
+
+
+  // 草↓
+  useFrame((state, delta) => {
+    if (grassAnimation.isActive && grassAnimation.sphere) {
+      const { sphere, targetPosition } = grassAnimation;
+      sphere.position.lerp(targetPosition, 0.05);
+      if (sphere.position.distanceTo(targetPosition) < 0.1) {
+        scene.remove(sphere);
+        setHappyFlag(true)
+
+        setGrassAnimation(prev => ({ ...prev, isActive: false, sphere: null }));
+      }
     }
-    if (catRef.current) {
-      // X移動
-      catRef.current.position.x = Math.sin(time) + 1
-      // Y回転
-      catRef.current.rotation.y += delta
-     }  
-     if(birdRef.current && happyFlag){
-      const amplitude = 0.2; // ジャンプの振幅
-
-      const y1 = Math.sin(time * 5) * 0.5+1 ; // 最初のジャンプ
-      const y2 = Math.sin((time - 0.5) * 5) * 0.5 + 1; // 2回目のジャンプ
-
-      birdRef.current.position.y = Math.max(y1-1, y2-1); // ジャンプの高さを適用する
-      setTimeout(() => {
-        setHappyFlag(false); // 3秒後に flg を true に設定
-        if(birdRef.current)
-    	    birdRef.current.position.y = -0.01;
-      }, 6000);
-     }
-
-  })
+  });
+  // 草↑
 
   return (
     <>
@@ -104,20 +106,29 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
       />
 
       <group rotation={[0, 0, 0]} position={[0, 0, 0]}>
-        {userData?.pets.map((pet,i)=>{
+        {userData?.pets.map((pet, i) => {
           const numCats = userData.pets.length
-          const RADIUS = 2.5
-          const angle = (i / numCats) * 2 * Math.PI; 
+          const angle = (i / numCats) * 2 * Math.PI;
           const x = Math.cos(angle) * RADIUS;
           const z = Math.sin(angle) * RADIUS;
+          const position = new THREE.Vector3(x, 0.4, z);
 
           return (
-            <mesh ref={birdRef} key={pet.Language} position={[x, 0, z]} rotation={[0,Math.atan2(-x, -z)+Math.PI,0]}>
-              <CharacterModel vrmFile='bird0_white.vrm' onClickEvent={()=>touchPetHandler(pet)}/>
+            <mesh name={pet.Language} ref={birdRef} key={pet.Language} position={[x, 0, z]} rotation={[0, Math.atan2(-x, -z) + Math.PI, 0]}>
+              <CharacterModel vrmFile={friendshipGage(pet.FriendshipLevel)} onClickEvent={() => touchPetHandler(pet, position)} />
+              <Text
+                position={[0, -0.2, 0]}
+                rotation={[0, Math.PI, 0]}
+                fontSize={0.2}
+                color="green"
+                anchorX="center"
+                anchorY="middle"
+              >
+                {pet.Language}
+              </Text>
             </mesh>
           )
         })}
-        {/* {catModels} */}
       </group>
     </>
   )

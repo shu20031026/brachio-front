@@ -7,7 +7,7 @@ import { StrictMode, useState } from 'react';
 import { AdditionalUserInfo } from "firebase/auth";
 import { handleSignInClick } from "@/lib/firebaseAction";
 import { Canvas } from "@react-three/fiber";
-import { Html, OrbitControls, Sky, Text } from "@react-three/drei";
+import { OrbitControls, Sky} from "@react-three/drei";
 import CharacterModel from "../CharacterModel";
 
 
