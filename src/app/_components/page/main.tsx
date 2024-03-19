@@ -8,6 +8,7 @@ import Basic from '../basic'
 import { Button } from '@nextui-org/react'
 
 import { isIos } from '@/lib/isIos'
+import { langColorList } from '@/lib/lang'
 
 type Props = {
   param:string
@@ -17,6 +18,23 @@ type Props = {
 const Main:FC<Props> = ({...props}) => {
   const {param} = props
   const [deviceOrientation, setDeviceOrientation]= useState<DeviceOrientationEvent | null>(null)
+  const API="https://suited-hopefully-rhino.ngrok-free.app/"
+
+  // const [data,setData] = useState<any>()
+
+  // const testHandler = async () => {
+  //   try{
+  //     const res = await fetch(API, {
+  //       cache: "no-store",
+  //     })
+  //     const data = await res.json()
+  //     setData(data)
+  //     console.log(data)
+  //     return res
+  //   }catch(e){
+  //     console.error(e)
+  //   }
+  // }
 
   const requestDeviceOrientationPermission = () => {
     if (
@@ -43,6 +61,7 @@ const Main:FC<Props> = ({...props}) => {
 
   return (
     <div className="w-full h-screen overflow-hidden">
+      <div>{JSON.stringify(langColorList)}</div>
       <div>{param}</div>
       <Button onClick={()=>requestDeviceOrientationPermission()}>motion</Button>
       <StrictMode>
