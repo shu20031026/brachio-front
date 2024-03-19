@@ -12,6 +12,7 @@ import { useLightHelper } from '@/hooks/useLightHelper'
 import { CURRENT_MODAL, USER_DATA_ATOM } from '@/stores/atoms'
 import { useAtom } from 'jotai'
 import { Pet } from '@/interfaces/types'
+import { friendshipGage } from '@/lib/friendshipGage'
 
 // 基本
 const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
@@ -100,7 +101,7 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
 
           return (
             <mesh key={pet.Language} position={[x, 0, z]} rotation={[0,Math.atan2(-x, -z)+Math.PI,0]}>
-              <CharacterModel vrmFile='bird0_white.vrm'  onClickEvent={()=>touchPetHandler(pet,position)}/>
+              <CharacterModel vrmFile={friendshipGage(pet.FriendshipLevel)}  onClickEvent={()=>touchPetHandler(pet,position)}/>
             </mesh>
           )
         })}
