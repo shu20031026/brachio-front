@@ -97,7 +97,7 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
 
           return (
             <mesh key={pet.Language} position={[x, 0, z]} >
-            <CharacterModel vrmFile='/shiro.vrm' onClickEvent={()=>touchPetHandler(pet)}/>
+            <CharacterModel vrmFile='bird0_white.vrm' onClickEvent={()=>touchPetHandler(pet)}/>
           </mesh>
           )
         })}
