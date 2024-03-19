@@ -22,7 +22,7 @@ const CharacterModel: FC<Props> = ({...props}) => {
       })
 
       loader.load(
-        vrmFile,
+        `/assets/${vrmFile}`,
         (tmpGltf: GLTF) => {
           setGltf(tmpGltf)
           console.log("loaded")
