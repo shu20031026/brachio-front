@@ -1,4 +1,4 @@
-{
+export const userData = {
   "user": {
     "GithubID": "Tanakaryuki",
     "DisplayName": "Tanaka ryuki",
@@ -7,6 +7,27 @@
   "pets": [
     {
       "Language": "python",
+      "HungerLevel": "100",
+      "FriendshipLevel": "100",
+      "EscapeNum": "3",
+      "BaitsNum": "3"
+    },
+    {
+      "Language": "go",
+      "HungerLevel": "100",
+      "FriendshipLevel": "100",
+      "EscapeNum": "3",
+      "BaitsNum": "3"
+    },
+    {
+      "Language": "rust",
+      "HungerLevel": "100",
+      "FriendshipLevel": "100",
+      "EscapeNum": "3",
+      "BaitsNum": "3"
+    },
+    {
+      "Language": "javascript",
       "HungerLevel": "100",
       "FriendshipLevel": "100",
       "EscapeNum": "3",
