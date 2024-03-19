@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useRef } from 'react'
+import { FC, useRef, useState } from 'react'
 import { DeviceOrientationControls, OrbitControls, useHelper } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 
@@ -22,9 +22,21 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
   const { directionalLight } = useLightHelper();
   const [currentModalContent, setCurrentModalContent] = useAtom(CURRENT_MODAL)
   const [userData, setUserData] = useAtom(USER_DATA_ATOM)
+  const { camera, scene } = useThree();
 
-  const touchPetHandler = (pet:Pet) =>{
-    setCurrentModalContent(pet)
+  const [grassAnimation, setGrassAnimation] = useState<{ sphere: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial> | null, targetPosition: THREE.Vector3, isActive: boolean }>({ sphere: null, targetPosition: new THREE.Vector3(), isActive: false });
+
+  const touchPetHandler = (pet:Pet, grassPosition: THREE.Vector3) =>{
+    // setCurrentModalContent(pet)
+
+    // 草の生成
+    const sphereGeometry = new THREE.SphereGeometry(0.05, 32, 32);
+    const sphereMaterial = new THREE.MeshBasicMaterial({ color: 0X006400 });
+    const newSphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    newSphere.position.copy(camera.position);
+    scene.add(newSphere);
+
+    setGrassAnimation({ sphere: newSphere, targetPosition: grassPosition, isActive: true });
   }
 
   useFrame((state, delta) => {
@@ -43,6 +55,19 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
       catRef.current.rotation.y += delta
      }  
   })
+
+  // 草↓
+  useFrame((state, delta) => {
+    if (grassAnimation.isActive && grassAnimation.sphere) {
+      const { sphere, targetPosition } = grassAnimation;
+      sphere.position.lerp(targetPosition, 0.05);
+      if (sphere.position.distanceTo(targetPosition) < 0.1) {
+        scene.remove(sphere);
+        setGrassAnimation(prev => ({ ...prev, isActive: false, sphere: null }));
+      }
+    }
+  });
+  // 草↑
 
   return (
     <>
@@ -71,10 +96,11 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
           const angle = (i / numCats) * 2 * Math.PI; 
           const x = Math.cos(angle) * RADIUS;
           const z = Math.sin(angle) * RADIUS;
+          const position = new THREE.Vector3(x, 0.4, z);
 
           return (
             <mesh key={pet.Language} position={[x, 0, z]} rotation={[0,Math.atan2(-x, -z)+Math.PI,0]}>
-            <CharacterModel vrmFile='/shiro.vrm' onClickEvent={()=>touchPetHandler(pet)}/>
+            <CharacterModel vrmFile='/shiro.vrm' onClickEvent={()=>touchPetHandler(pet,position)}/>
           </mesh>
           )
         })}
