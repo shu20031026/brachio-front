@@ -8,6 +8,13 @@ export const DUMMY_USER_DATA:FetchedData = {
   },
   "pets": [
     {
+      "Language": "HTML",
+      "HungerLevel": 60,
+      "FriendshipLevel": 50,
+      "EscapeNum": 3,
+      "BaitsNum": 3
+    },
+    {
       "Language": "python",
       "HungerLevel": 10,
       "FriendshipLevel": 100,
