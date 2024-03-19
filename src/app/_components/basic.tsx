@@ -27,28 +27,6 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
     setCurrentModalContent(pet)
   }
 
-  // const catModels = [];
-  // const radius = 4; // 鳥を配置する円の半径
-  // const numCats = 3; // 鳥の数
-  // for (let i = 0; i < numCats; i++) {
-  //   const angle = (i / numCats) * 2 * Math.PI; // 各鳥の位置を決定する角度
-  //   const x = Math.cos(angle) * radius;
-  //   const z = Math.sin(angle) * radius;
-  //   catModels.push(
-  //     <mesh key={i} position={[x, 0, z]} >
-  //       <CharacterModel vrmFile='/shiro.vrm' onClickEvent={touchPetHandler}/>
-  //     </mesh>
-  //   );
-  // }
-
-  // ダイレクト光のヘルパー
-  // useHelper(
-  //   directionalLight as React.MutableRefObject<THREE.DirectionalLight>,
-  //   THREE.DirectionalLightHelper,
-  //   1,
-  //   ''
-  // )
-
   useFrame((state, delta) => {
     // 経過時間
     const time = state.clock.elapsedTime
