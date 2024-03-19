@@ -11,6 +11,8 @@ import { registerServiceWorker } from "@/utils/registerServiceWorker";
 import { handleSignInClick } from "@/lib/firebaseAction";
 import getCookieValue from "@/lib/cookie";
 
+//@ts-ignore
+const token = (typeof window === "object") ? getCookieValue("token") : ""
 
 // Root
 const Root:FC = () => {
@@ -26,7 +28,7 @@ const Root:FC = () => {
       <div>{JSON.stringify(details?.profile?.avatar_url, null , 2)}</div>
       <div>{JSON.stringify(details?.isNewUser)}</div>
       <div>{details?.profile?.name as string}</div>
-      <div>{getCookieValue("token")}</div>
+      <div>{token}</div>
       <Image src={details?.profile?.avatar_url as string || ""} alt=""/>
 
       <div>

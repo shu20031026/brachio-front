@@ -1,3 +1,4 @@
+"use client"
 import {
   getAuth,
   Auth,
@@ -41,7 +42,10 @@ export const handleSignInClick = (details: AdditionalUserInfo | null, setDetails
         token = credential.accessToken;
       }
       //@ts-ignore
-      document.cookie = `token=${result.user.accessToken};path=/;max-age=3600;secure`;
+      if (process.widow){
+      //@ts-ignore
+        document.cookie = `token=${result.user.accessToken};path=/;max-age=3600;secure`;
+      }
     })
     .catch((error) => {
       console.error('Sign-in error:', error);
