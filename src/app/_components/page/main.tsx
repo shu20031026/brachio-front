@@ -8,7 +8,7 @@ import Basic from '../basic'
 import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Progress } from '@nextui-org/react'
 
 import { useAtom } from 'jotai'
-import { CURRENT_MODAL, USER_DATA_ATOM } from '@/stores/atoms'
+import { CURRENT_MODAL, IS_OPEN_MODAL, NOW_FEEDING, USER_DATA_ATOM } from '@/stores/atoms'
 import { DUMMY_USER_DATA } from '../../../../mock/userdata'
 
 type Props = {
@@ -19,10 +19,12 @@ type Props = {
 const Main: FC<Props> = ({ ...props }) => {
   const { param } = props
   const [currentModalContentData, setCurrentModalContentData] = useAtom(CURRENT_MODAL)
+  const [nowFeeding, setNowFeeding] = useAtom(NOW_FEEDING)
   const [deviceOrientation, setDeviceOrientation] = useState<DeviceOrientationEvent | null>(null)
   const API = "https://suited-hopefully-rhino.ngrok-free.app/"
 
   const [userData, setUserData] = useAtom(USER_DATA_ATOM)
+  const [isOpenModal, setIsOpenModal] = useAtom(IS_OPEN_MODAL)
   // const [data,setData] = useState<any>()
 
   // const testHandler = async () => {
@@ -45,7 +47,13 @@ const Main: FC<Props> = ({ ...props }) => {
   }, [setUserData])
 
   const handleCloseModal = () => {
+    setIsOpenModal(false)
     setCurrentModalContentData(null)
+  }
+
+  const handleFeeding = () => {
+    setIsOpenModal(false)
+    setNowFeeding(true)
   }
 
   const requestDeviceOrientationPermission = () => {
@@ -73,7 +81,10 @@ const Main: FC<Props> = ({ ...props }) => {
 
   return (
     <div className="w-full h-screen overflow-hidden">
-      <Button onClick={() => requestDeviceOrientationPermission()}>motion</Button>
+      <div className='w-full flex'>
+        <Button onClick={() => requestDeviceOrientationPermission()}>motion</Button>
+        <p>←iOSの方はこちらをタップ</p>
+      </div>
       <StrictMode>
         <Canvas
           flat
@@ -96,9 +107,8 @@ const Main: FC<Props> = ({ ...props }) => {
 
       </div>
       <Modal
-        isOpen={currentModalContentData !== null}
+        isOpen={isOpenModal}
         placement="bottom-center"
-        // onOpenChange={} 
         closeButton={<div></div>}
         hideCloseButton
       >
@@ -125,14 +135,12 @@ const Main: FC<Props> = ({ ...props }) => {
                   <p className='px-1 font-bold'>草の所持数</p>
                   <p className='px-1 font-extrabold'>{currentModalContentData?.BaitsNum}個</p>
                 </div>
+                <Button onPress={handleFeeding}></Button>
               </ModalBody>
               <ModalFooter>
                 <Button color="success" onPress={handleCloseModal}>
                   <p className='text-white font-bold'>とじる</p>
                 </Button>
-                {/* <Button color="primary" onPress={onClose}>
-                  Action
-                </Button> */}
               </ModalFooter>
             </>
           )}

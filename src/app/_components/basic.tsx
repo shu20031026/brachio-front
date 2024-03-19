@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { DeviceOrientationControls, OrbitControls, Text } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 
@@ -8,7 +8,7 @@ import * as THREE from 'three'
 import CharacterModel from './CharacterModel'
 import { useLookAtCenter } from '@/hooks/useLookAtCenter'
 import { useSceneBackground } from '@/hooks/useSceneBackground'
-import { CURRENT_MODAL, USER_DATA_ATOM } from '@/stores/atoms'
+import { CURRENT_MODAL, GRASS_VECTOR, IS_OPEN_MODAL, NOW_FEEDING, USER_DATA_ATOM } from '@/stores/atoms'
 import { useAtom } from 'jotai'
 import { Pet } from '@/interfaces/types'
 import { friendshipGage } from '@/lib/friendshipGage'
@@ -19,20 +19,38 @@ const Basic: FC = () => {
   useSceneBackground();
   useLookAtCenter();
   const [userData, setUserData] = useAtom(USER_DATA_ATOM)
+  const [isOpenModal, setIsOpenModal] = useAtom(IS_OPEN_MODAL)
+  const [currentModalContent, setCurrentModalContent] = useAtom(CURRENT_MODAL)
+  const [nowFeeding, setNowFeeding] = useAtom(NOW_FEEDING)
+
   const { camera, scene } = useThree();
 
   const [grassAnimation, setGrassAnimation] = useState<{ sphere: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial> | null, targetPosition: THREE.Vector3, isActive: boolean }>({ sphere: null, targetPosition: new THREE.Vector3(), isActive: false });
 
   const [happyFlag, setHappyFlag] = useState(false)
   const [happyPetId, setHappyPetId] = useState<string | null>(null);
+  const [grassVector, setGrassVector] = useAtom(GRASS_VECTOR)
 
   const RADIUS = 2.5
 
-  const touchPetHandler = (pet: Pet, grassPosition: THREE.Vector3) => {
+  useEffect(() => {
+    if (nowFeeding && currentModalContent && grassVector) {
+      feedingHandler(currentModalContent, grassVector)
+    }
+  }, [currentModalContent, grassVector, nowFeeding])
+
+  const handleOpenModal = (pet: Pet, position: THREE.Vector3) => {
+    setCurrentModalContent(pet)
+    setIsOpenModal(true)
+    setGrassVector(position)
     //モーダル
     // setCurrentModalContent(pet)
 
-    // ジャンプ
+    // モーダル開く
+    // Petをグローバルに渡す
+  }
+
+  const feedingHandler = (pet: Pet, grassPosition: THREE.Vector3) => {
     setHappyPetId(pet.Language);
 
     // 草の生成
@@ -61,6 +79,10 @@ const Basic: FC = () => {
         petMesh.position.y = y2 - 1;
         setTimeout(() => {
           setHappyFlag(false);
+          setIsOpenModal(false)
+          setNowFeeding(false)
+          setCurrentModalContent(null)
+          setGrassVector(null)
         }, 3000);
       } else if (petMesh) {
         petMesh.position.y = 0; // クリックされていないペットは元の位置に
@@ -112,9 +134,11 @@ const Basic: FC = () => {
           const z = Math.sin(angle) * RADIUS;
           const position = new THREE.Vector3(x, 0.4, z);
 
+          //pet positionをセット
+
           return (
             <mesh name={pet.Language} ref={birdRef} key={pet.Language} position={[x, 0, z]} rotation={[0, Math.atan2(-x, -z) + Math.PI, 0]}>
-              <CharacterModel vrmFile={friendshipGage(pet.FriendshipLevel)} onClickEvent={() => touchPetHandler(pet, position)} />
+              <CharacterModel vrmFile={friendshipGage(pet.FriendshipLevel)} onClickEvent={() => handleOpenModal(pet, position)} />
               <Text
                 position={[0, -0.2, 0]}
                 rotation={[0, Math.PI, 0]}
