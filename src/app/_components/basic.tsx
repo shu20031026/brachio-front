@@ -14,11 +14,10 @@ import { Pet } from '@/interfaces/types'
 import { friendshipGage } from '@/lib/friendshipGage'
 
 // 基本
-const Basic: FC<{ deviceEvent: DeviceOrientationEvent | null }> = ({ deviceEvent }) => {
+const Basic: FC = () => {
   const birdRef = useRef<THREE.Mesh>(null)
   useSceneBackground();
   useLookAtCenter();
-  const [currentModalContent, setCurrentModalContent] = useAtom(CURRENT_MODAL)
   const [userData, setUserData] = useAtom(USER_DATA_ATOM)
   const { camera, scene } = useThree();
 

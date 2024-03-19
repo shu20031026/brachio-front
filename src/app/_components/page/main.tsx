@@ -12,15 +12,15 @@ import { CURRENT_MODAL, USER_DATA_ATOM } from '@/stores/atoms'
 import { DUMMY_USER_DATA } from '../../../../mock/userdata'
 
 type Props = {
-  param:string
+  param: string
 }
 
 // メイン
-const Main:FC<Props> = ({...props}) => {
-  const {param} = props
+const Main: FC<Props> = ({ ...props }) => {
+  const { param } = props
   const [currentModalContentData, setCurrentModalContentData] = useAtom(CURRENT_MODAL)
-  const [deviceOrientation, setDeviceOrientation]= useState<DeviceOrientationEvent | null>(null)
-  const API="https://suited-hopefully-rhino.ngrok-free.app/"
+  const [deviceOrientation, setDeviceOrientation] = useState<DeviceOrientationEvent | null>(null)
+  const API = "https://suited-hopefully-rhino.ngrok-free.app/"
 
   const [userData, setUserData] = useAtom(USER_DATA_ATOM)
   // const [data,setData] = useState<any>()
@@ -39,12 +39,12 @@ const Main:FC<Props> = ({...props}) => {
   //   }
   // }
 
-  useEffect(()=>{
+  useEffect(() => {
     const fetchData = DUMMY_USER_DATA
     setUserData(fetchData)
-  },[setUserData])
+  }, [setUserData])
 
-  const handleCloseModal = () =>{
+  const handleCloseModal = () => {
     setCurrentModalContentData(null)
   }
 
@@ -73,7 +73,7 @@ const Main:FC<Props> = ({...props}) => {
 
   return (
     <div className="w-full h-screen overflow-hidden">
-      <Button onClick={()=>requestDeviceOrientationPermission()}>motion</Button>
+      <Button onClick={() => requestDeviceOrientationPermission()}>motion</Button>
       <StrictMode>
         <Canvas
           flat
@@ -89,14 +89,14 @@ const Main:FC<Props> = ({...props}) => {
             position: [0, -0.2, 0],
           }}
         >
-          <Basic deviceEvent={deviceOrientation}/>
+          <Basic />
         </Canvas>
       </StrictMode>
       <div>
-        
+
       </div>
-      <Modal 
-        isOpen={currentModalContentData!==null} 
+      <Modal
+        isOpen={currentModalContentData !== null}
         placement="bottom-center"
         // onOpenChange={} 
         closeButton={<div></div>}
