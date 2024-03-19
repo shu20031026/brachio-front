@@ -42,6 +42,8 @@ export const handleSignInClick = (details: AdditionalUserInfo | null, setDetails
         token = credential.accessToken;
       }
       //@ts-ignore
+      console.log(result.user.accessToken)
+      //@ts-ignore
       if (process.widow){
       //@ts-ignore
         document.cookie = `token=${result.user.accessToken};path=/;max-age=3600;`;
