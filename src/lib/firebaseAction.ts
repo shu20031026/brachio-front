@@ -24,7 +24,6 @@ export const createAndSetGitHubAuthProviderWithScope = () => {
 export const initializeAuthIfRequired = () => {
   if (auth === null) {
     auth = getAuth(firebaseApp);
-    console.log(auth);
   }
   return auth;
 }
@@ -32,7 +31,7 @@ export const initializeAuthIfRequired = () => {
 export const handleSignInClick = (details: AdditionalUserInfo | null, setDetails: Dispatch<SetStateAction<AdditionalUserInfo | null>>) => {
   provider = createAndSetGitHubAuthProviderWithScope();
   auth = initializeAuthIfRequired();
-  
+
   if (token === null) {
     signInWithPopup(auth, provider)
     .then((result) => {
@@ -40,16 +39,16 @@ export const handleSignInClick = (details: AdditionalUserInfo | null, setDetails
       const credential = GithubAuthProvider.credentialFromResult(result);
       if (credential && credential.accessToken) {
         token = credential.accessToken;
-        console.log('token: ' + credential.accessToken);
       }
-      console.log(result.user);
+      //@ts-ignore
+      document.cookie = `token=${result.user.accessToken};path=/;max-age=3600;secure`;
     })
     .catch((error) => {
       console.error('Sign-in error:', error);
       console.log(provider);
       console.log(auth);
       console.log(details?.username);
-      // エラーが発生した場合の処理を追加することができます。
+      // エラーが発生した場合の処理
     });
   }
 }
