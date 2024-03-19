@@ -9,6 +9,8 @@ import CharacterModel from './CharacterModel'
 import { useLookAtCenter } from '@/hooks/useLookAtCenter'
 import { useSceneBackground } from '@/hooks/useSceneBackground'
 import { useLightHelper } from '@/hooks/useLightHelper'
+import { CURRENT_MODAL } from '@/stores/atoms'
+import { useAtom } from 'jotai'
 
 // 基本
 const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
@@ -17,6 +19,17 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
   useSceneBackground();
   useLookAtCenter();
   const { directionalLight } = useLightHelper();
+  const [modalContentData, setModalContentData] = useAtom(CURRENT_MODAL)
+
+  const touchPet = () =>{
+    setModalContentData({
+      "Language": "python",
+      "HungerLevel": 10,
+      "FriendshipLevel": 100,
+      "EscapeNum": 3,
+      "BaitsNum": 3
+    })
+  }
 
   const catModels = [];
   const radius = 4; // 鳥を配置する円の半径
@@ -27,7 +40,7 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
     const z = Math.sin(angle) * radius;
     catModels.push(
       <mesh key={i} position={[x, 0, z]} >
-        <CharacterModel vrmFile='/bananaCat.vrm' />
+        <CharacterModel vrmFile='/shiro.vrm' onClickEvent={touchPet}/>
       </mesh>
     );
   }
@@ -61,7 +74,7 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
     <>
       {/* コントロール */}
       <OrbitControls makeDefault />
-      <DeviceOrientationControls  />
+      {/* <DeviceOrientationControls /> */}
 
       {/* 背景 */}
       <color args={['ivory']} attach="background" />

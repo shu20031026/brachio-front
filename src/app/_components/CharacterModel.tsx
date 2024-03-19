@@ -6,10 +6,11 @@ import { CircularProgress } from "@nextui-org/react";
 
 type Props = {
   vrmFile:string
+  onClickEvent?: () => void
 }
 
 const CharacterModel: FC<Props> = ({...props}) => {
-  const {vrmFile} = props
+  const {vrmFile, onClickEvent} = props
   const [gltf, setGltf] = useState<GLTF>()
   const [progress, setProgress] = useState<number>(0)
 
@@ -47,7 +48,7 @@ const CharacterModel: FC<Props> = ({...props}) => {
       ) : (
         <Html center>
           <div>{progress}%</div>
-          <CircularProgress color="primary" aria-label="Loading..." value={progress}/>
+          <CircularProgress color="primary" aria-label="Loading..." value={progress} onClick={()=>console.log("click")}/>
         </Html>
       )}
     </>

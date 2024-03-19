@@ -11,7 +11,6 @@ import { registerServiceWorker } from "@/utils/registerServiceWorker";
 import { handleSignInClick } from "@/lib/firebaseAction";
 import getCookieValue from "@/lib/cookie";
 
-//@ts-ignore
 // Root
 const Root:FC = () => {
   const [details, setDetails] = useState<AdditionalUserInfo | null>(null); 
@@ -35,7 +34,7 @@ const Root:FC = () => {
             main
           </Button>
         </Link>
-        <Button onClick={async ()=> {await registerServiceWorker()}}>sw</Button>
+        {/* <Button onClick={async ()=> {await registerServiceWorker()}}>sw</Button> */}
       </div>
     </div>
   )

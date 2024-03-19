@@ -16,12 +16,9 @@ export type Pet = {
   "BaitsNum": number
 }
 
-export type PetList = Pet[]
 
-export type Followers = User[]
-
-export type ResponseData = {
+export type FetchedData = {
   "user": User,
-  "pets": PetList,
-  "followers": Followers
+  "pets": Pet[],
+  "followers": User[]
 }
