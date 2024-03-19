@@ -5,13 +5,14 @@ import { Canvas } from '@react-three/fiber'
 
 import * as THREE from 'three'
 import Basic from '../basic'
-import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader } from '@nextui-org/react'
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Progress } from '@nextui-org/react'
 
 import { isIos } from '@/lib/isIos'
 import { langColorList } from '@/lib/lang'
 import { useAtom } from 'jotai'
 import { CURRENT_MODAL, USER_DATA_ATOM } from '@/stores/atoms'
 import { DUMMY_USER_DATA } from '../../../../mock/userdata'
+import router from 'next/router'
 
 type Props = {
   param:string
@@ -52,7 +53,6 @@ const Main:FC<Props> = ({...props}) => {
 
   const requestDeviceOrientationPermission = () => {
     if (
-      isIos() &&
       DeviceOrientationEvent &&
       // @ts-ignore
       typeof DeviceOrientationEvent.requestPermission === "function"
@@ -68,6 +68,7 @@ const Main:FC<Props> = ({...props}) => {
               }
             );
           }
+          window.location.reload();
         })
         .catch(console.error);
     }
@@ -75,10 +76,7 @@ const Main:FC<Props> = ({...props}) => {
 
   return (
     <div className="w-full h-screen overflow-hidden">
-      <div>{JSON.stringify(langColorList)}</div>
-      <div>{param}</div>
       <Button onClick={()=>requestDeviceOrientationPermission()}>motion</Button>
-      <div>{currentModalContentData?.Language}</div>
       <StrictMode>
         <Canvas
           flat
@@ -91,30 +89,49 @@ const Main:FC<Props> = ({...props}) => {
             fov: 45,
             near: 0.1,
             far: 100,
-            position: [0, 0, 1],
+            position: [0, -0.2, 0],
           }}
         >
           <Basic deviceEvent={deviceOrientation}/>
         </Canvas>
       </StrictMode>
+      <div>
+        
+      </div>
       <Modal 
         isOpen={currentModalContentData!==null} 
         placement="bottom-center"
         // onOpenChange={} 
+        closeButton={<div></div>}
+        hideCloseButton
       >
         <ModalContent>
           {() => (
             <>
-              <ModalHeader className="flex flex-col gap-1">{currentModalContentData?.Language}</ModalHeader>
+              <ModalHeader className="flex flex-col gap-1">
+                <p className='text-2xl'>{currentModalContentData?.Language}</p>
+              </ModalHeader>
               <ModalBody>
-                <p>空腹度:{currentModalContentData?.HungerLevel}%</p>
-                <p>親愛度:{currentModalContentData?.FriendshipLevel}%</p>
-                <p>逃げられた回数:{currentModalContentData?.EscapeNum}回</p>
-                <p>餌の所持数:{currentModalContentData?.BaitsNum}個</p>                
+                <div>
+                  <p className='p-2 font-bold'>満腹度</p>
+                  <Progress color="success" isStriped aria-label="Loading..." value={currentModalContentData?.HungerLevel} />
+                </div>
+                <div>
+                  <p className='p-2 font-bold'>親愛度</p>
+                  <Progress color="success" isStriped aria-label="Loading..." value={currentModalContentData?.FriendshipLevel} />
+                </div>
+                <div className='flex'>
+                  <p className='px-1 font-bold'>逃げられた回数</p>
+                  <p className='px-1 font-extrabold'>{currentModalContentData?.EscapeNum}回</p>
+                </div>
+                <div className='flex'>
+                  <p className='px-1 font-bold'>草の所持数</p>
+                  <p className='px-1 font-extrabold'>{currentModalContentData?.BaitsNum}個</p>
+                </div>
               </ModalBody>
               <ModalFooter>
-                <Button color="danger" variant="light" onPress={handleCloseModal}>
-                  Close
+                <Button color="success" onPress={handleCloseModal}>
+                  <p className='text-white font-bold'>とじる</p>
                 </Button>
                 {/* <Button color="primary" onPress={onClose}>
                   Action

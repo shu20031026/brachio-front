@@ -42,12 +42,12 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
   // }
 
   // ダイレクト光のヘルパー
-  useHelper(
-    directionalLight as React.MutableRefObject<THREE.DirectionalLight>,
-    THREE.DirectionalLightHelper,
-    1,
-    'red'
-  )
+  // useHelper(
+  //   directionalLight as React.MutableRefObject<THREE.DirectionalLight>,
+  //   THREE.DirectionalLightHelper,
+  //   1,
+  //   ''
+  // )
 
   useFrame((state, delta) => {
     // 経過時間
@@ -76,27 +76,26 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
       {/* <color args={['ivory']} attach="background" /> */}
 
       {/* 環境光 */}
-      <ambientLight intensity={0.5} />
+      <ambientLight intensity={1} />
 
       {/* 平行光 */}
       <directionalLight
         castShadow
-        ref={directionalLight}
         position={[1, 2, 3]}
         intensity={0.5}
         shadow-mapSize={[1024, 1024]}
       />
 
-      <group rotation={[0, 0, 0]} position={[0, 0, 1]}>
+      <group rotation={[0, 0, 0]} position={[0, 0, 0]}>
         {userData?.pets.map((pet,i)=>{
           const numCats = userData.pets.length
-          const RADIUS = 2
+          const RADIUS = 2.5
           const angle = (i / numCats) * 2 * Math.PI; 
           const x = Math.cos(angle) * RADIUS;
           const z = Math.sin(angle) * RADIUS;
 
           return (
-            <mesh key={pet.Language} position={[x, 0, z]} >
+            <mesh key={pet.Language} position={[x, 0, z]} rotation={[0,Math.atan2(-x, -z)+Math.PI,0]}>
             <CharacterModel vrmFile='bird0_white.vrm' onClickEvent={()=>touchPetHandler(pet)}/>
           </mesh>
           )

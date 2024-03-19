@@ -8,8 +8,6 @@ export const useLightHelper = () => {
   useHelper(
     directionalLight as React.MutableRefObject<THREE.DirectionalLight>,
     THREE.DirectionalLightHelper,
-    1,
-    'red'
   );
 
   return { directionalLight };
