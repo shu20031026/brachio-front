@@ -44,11 +44,11 @@ const CharacterModel: FC<Props> = ({...props}) => {
   return (
     <>
       {gltf ? (
-        <primitive object={gltf.scene} />
+        <primitive object={gltf.scene} onClick={onClickEvent}/>
       ) : (
         <Html center>
           <div>{progress}%</div>
-          <CircularProgress color="primary" aria-label="Loading..." value={progress} onClick={()=>console.log("click")}/>
+          <CircularProgress color="primary" aria-label="Loading..." value={progress}/>
         </Html>
       )}
     </>

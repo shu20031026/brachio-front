@@ -20,7 +20,7 @@ type Props = {
 // メイン
 const Main:FC<Props> = ({...props}) => {
   const {param} = props
-  const [modalContentData, setModalContentData] = useAtom(CURRENT_MODAL)
+  const [currentModalContentData, setCurrentModalContentData] = useAtom(CURRENT_MODAL)
   const [deviceOrientation, setDeviceOrientation]= useState<DeviceOrientationEvent | null>(null)
   const API="https://suited-hopefully-rhino.ngrok-free.app/"
 
@@ -47,7 +47,7 @@ const Main:FC<Props> = ({...props}) => {
   },[setUserData])
 
   const handleCloseModal = () =>{
-    setModalContentData(null)
+    setCurrentModalContentData(null)
   }
 
   const requestDeviceOrientationPermission = () => {
@@ -78,7 +78,7 @@ const Main:FC<Props> = ({...props}) => {
       <div>{JSON.stringify(langColorList)}</div>
       <div>{param}</div>
       <Button onClick={()=>requestDeviceOrientationPermission()}>motion</Button>
-      <div>{modalContentData?.Language}</div>
+      <div>{currentModalContentData?.Language}</div>
       <StrictMode>
         <Canvas
           flat
@@ -91,32 +91,26 @@ const Main:FC<Props> = ({...props}) => {
             fov: 45,
             near: 0.1,
             far: 100,
-            position: [0, 0, 0],
+            position: [0, 0, 1],
           }}
         >
           <Basic deviceEvent={deviceOrientation}/>
         </Canvas>
       </StrictMode>
       <Modal 
-        isOpen={modalContentData!==null} 
+        isOpen={currentModalContentData!==null} 
         placement="bottom-center"
         // onOpenChange={} 
       >
         <ModalContent>
           {() => (
             <>
-              <ModalHeader className="flex flex-col gap-1">Modal Title</ModalHeader>
+              <ModalHeader className="flex flex-col gap-1">{currentModalContentData?.Language}</ModalHeader>
               <ModalBody>
-                <p> 
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                </p>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Nullam pulvinar risus non risus hendrerit venenatis.
-                  Pellentesque sit amet hendrerit risus, sed porttitor quam.
-                </p>
+                <p>空腹度:{currentModalContentData?.HungerLevel}%</p>
+                <p>親愛度:{currentModalContentData?.FriendshipLevel}%</p>
+                <p>逃げられた回数:{currentModalContentData?.EscapeNum}回</p>
+                <p>餌の所持数:{currentModalContentData?.BaitsNum}個</p>                
               </ModalBody>
               <ModalFooter>
                 <Button color="danger" variant="light" onPress={handleCloseModal}>

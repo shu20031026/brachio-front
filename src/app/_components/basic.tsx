@@ -9,8 +9,9 @@ import CharacterModel from './CharacterModel'
 import { useLookAtCenter } from '@/hooks/useLookAtCenter'
 import { useSceneBackground } from '@/hooks/useSceneBackground'
 import { useLightHelper } from '@/hooks/useLightHelper'
-import { CURRENT_MODAL } from '@/stores/atoms'
+import { CURRENT_MODAL, USER_DATA_ATOM } from '@/stores/atoms'
 import { useAtom } from 'jotai'
+import { Pet } from '@/interfaces/types'
 
 // 基本
 const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
@@ -19,31 +20,26 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
   useSceneBackground();
   useLookAtCenter();
   const { directionalLight } = useLightHelper();
-  const [modalContentData, setModalContentData] = useAtom(CURRENT_MODAL)
+  const [currentModalContent, setCurrentModalContent] = useAtom(CURRENT_MODAL)
+  const [userData, setUserData] = useAtom(USER_DATA_ATOM)
 
-  const touchPet = () =>{
-    setModalContentData({
-      "Language": "python",
-      "HungerLevel": 10,
-      "FriendshipLevel": 100,
-      "EscapeNum": 3,
-      "BaitsNum": 3
-    })
+  const touchPetHandler = (pet:Pet) =>{
+    setCurrentModalContent(pet)
   }
 
-  const catModels = [];
-  const radius = 4; // 鳥を配置する円の半径
-  const numCats = 3; // 鳥の数
-  for (let i = 0; i < numCats; i++) {
-    const angle = (i / numCats) * 2 * Math.PI; // 各鳥の位置を決定する角度
-    const x = Math.cos(angle) * radius;
-    const z = Math.sin(angle) * radius;
-    catModels.push(
-      <mesh key={i} position={[x, 0, z]} >
-        <CharacterModel vrmFile='/shiro.vrm' onClickEvent={touchPet}/>
-      </mesh>
-    );
-  }
+  // const catModels = [];
+  // const radius = 4; // 鳥を配置する円の半径
+  // const numCats = 3; // 鳥の数
+  // for (let i = 0; i < numCats; i++) {
+  //   const angle = (i / numCats) * 2 * Math.PI; // 各鳥の位置を決定する角度
+  //   const x = Math.cos(angle) * radius;
+  //   const z = Math.sin(angle) * radius;
+  //   catModels.push(
+  //     <mesh key={i} position={[x, 0, z]} >
+  //       <CharacterModel vrmFile='/shiro.vrm' onClickEvent={touchPetHandler}/>
+  //     </mesh>
+  //   );
+  // }
 
   // ダイレクト光のヘルパー
   useHelper(
@@ -74,10 +70,10 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
     <>
       {/* コントロール */}
       <OrbitControls makeDefault />
-      {/* <DeviceOrientationControls /> */}
+      <DeviceOrientationControls />
 
       {/* 背景 */}
-      <color args={['ivory']} attach="background" />
+      {/* <color args={['ivory']} attach="background" /> */}
 
       {/* 環境光 */}
       <ambientLight intensity={0.5} />
@@ -91,8 +87,21 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
         shadow-mapSize={[1024, 1024]}
       />
 
-      <group rotation={[0, 0, 0]} position={[0, 0, 0]}>
-        {catModels}
+      <group rotation={[0, 0, 0]} position={[0, 0, 1]}>
+        {userData?.pets.map((pet,i)=>{
+          const numCats = userData.pets.length
+          const RADIUS = 2
+          const angle = (i / numCats) * 2 * Math.PI; 
+          const x = Math.cos(angle) * RADIUS;
+          const z = Math.sin(angle) * RADIUS;
+
+          return (
+            <mesh key={pet.Language} position={[x, 0, z]} >
+            <CharacterModel vrmFile='/shiro.vrm' onClickEvent={()=>touchPetHandler(pet)}/>
+          </mesh>
+          )
+        })}
+        {/* {catModels} */}
       </group>
     </>
   )

@@ -18,6 +18,14 @@ const Root:FC = () => {
   return (
     <div className="w-full h-screen overflow-hidden">
       <div>Root</div>
+      <div>
+        <Link href={"/hoge"}>
+          <Button color="primary">
+            main
+          </Button>
+        </Link>
+        {/* <Button onClick={async ()=> {await registerServiceWorker()}}>sw</Button> */}
+      </div>
       <div>ろぐいんとか</div>
 
       <Button color="primary" onClick={() => handleSignInClick(details, setDetails)}>サインイン</Button>
@@ -28,14 +36,6 @@ const Root:FC = () => {
       <div>aaa</div>
       <Image src={details?.profile?.avatar_url as string || ""} alt=""/>
 
-      <div>
-        <Link href={"/hoge"}>
-          <Button color="primary">
-            main
-          </Button>
-        </Link>
-        {/* <Button onClick={async ()=> {await registerServiceWorker()}}>sw</Button> */}
-      </div>
     </div>
   )
 }
