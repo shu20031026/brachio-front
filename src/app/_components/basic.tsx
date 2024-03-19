@@ -1,7 +1,7 @@
 'use client'
 
 import { FC, useRef, useState } from 'react'
-import { DeviceOrientationControls, OrbitControls, useHelper } from '@react-three/drei'
+import { DeviceOrientationControls, OrbitControls, useHelper,Text } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 
 import * as THREE from 'three'
@@ -102,6 +102,16 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
           return (
             <mesh key={pet.Language} position={[x, 0, z]} rotation={[0,Math.atan2(-x, -z)+Math.PI,0]}>
               <CharacterModel vrmFile={friendshipGage(pet.FriendshipLevel)}  onClickEvent={()=>touchPetHandler(pet,position)}/>
+              <Text
+                position={[0, -0.2, 0]} // キャラクターの下に表示
+                rotation={[0, Math.PI, 0]}
+                fontSize={0.2}
+                color="green" // テキストの色
+                anchorX="center" // テキストを中央揃えに
+                anchorY="middle" // テキストを垂直方向の中央に配置
+              >
+                {pet.Language}
+              </Text>
             </mesh>
           )
         })}
