@@ -15,8 +15,6 @@ import { friendshipGage } from '@/lib/friendshipGage'
 
 // 基本
 const Basic: FC<{ deviceEvent: DeviceOrientationEvent | null }> = ({ deviceEvent }) => {
-  const boxRef = useRef<THREE.Mesh>(null)
-  const catRef = useRef<THREE.Mesh>(null)
   const birdRef = useRef<THREE.Mesh>(null)
   useSceneBackground();
   useLookAtCenter();
@@ -27,13 +25,16 @@ const Basic: FC<{ deviceEvent: DeviceOrientationEvent | null }> = ({ deviceEvent
   const [grassAnimation, setGrassAnimation] = useState<{ sphere: THREE.Mesh<THREE.SphereGeometry, THREE.MeshBasicMaterial> | null, targetPosition: THREE.Vector3, isActive: boolean }>({ sphere: null, targetPosition: new THREE.Vector3(), isActive: false });
 
   const [happyFlag, setHappyFlag] = useState(false)
+  const [happyPetId, setHappyPetId] = useState<string | null>(null);
+
+  const RADIUS = 2.5
 
   const touchPetHandler = (pet: Pet, grassPosition: THREE.Vector3) => {
     //モーダル
     // setCurrentModalContent(pet)
 
     // ジャンプ
-    setHappyFlag(true)
+    setHappyPetId(pet.Language);
 
     // 草の生成
     const sphereGeometry = new THREE.SphereGeometry(0.05, 32, 32);
@@ -46,35 +47,28 @@ const Basic: FC<{ deviceEvent: DeviceOrientationEvent | null }> = ({ deviceEvent
   }
 
   useFrame((state, delta) => {
-    // 経過時間
-    const time = state.clock.elapsedTime
-    if (boxRef.current) {
-      // X移動
-      boxRef.current.position.x = Math.sin(time) + 1
-      // Y回転
-      boxRef.current.rotation.y += delta
-    }
-    if (catRef.current) {
-      // X移動
-      catRef.current.position.x = Math.sin(time) + 1
-      // Y回転
-      catRef.current.rotation.y += delta
-    }
+    userData?.pets.forEach((pet, i) => {
+      const numCats = userData.pets.length;
+      const angle = (i / numCats) * 2 * Math.PI;
+      const x = Math.cos(angle) * RADIUS;
+      const z = Math.sin(angle) * RADIUS;
 
-    if (birdRef.current && happyFlag) {
+      const petMesh = scene.getObjectByName(pet.Language);
+      if (petMesh && pet.Language === happyPetId && happyFlag) {
+        const time = state.clock.elapsedTime;
+        const y1 = Math.sin(time * 5) * 0.5 + 1;
+        const y2 = Math.sin((time - 0.5) * 5) * 0.5 + 1;
+        petMesh.position.y = y1 - 1;
+        petMesh.position.y = y2 - 1;
+        setTimeout(() => {
+          setHappyFlag(false);
+        }, 3000);
+      } else if (petMesh) {
+        petMesh.position.y = 0; // クリックされていないペットは元の位置に
+      }
+    });
+  });
 
-      const y1 = Math.sin(time * 5) * 0.5 + 1; // 最初のジャンプ
-      const y2 = Math.sin((time - 0.5) * 5) * 0.5 + 1; // 2回目のジャンプ
-
-      birdRef.current.position.y = Math.max(y1 - 1, y2 - 1); // ジャンプの高さを適用する
-      setTimeout(() => {
-        setHappyFlag(false); // 3秒後に flg を true に設定
-        if (birdRef.current)
-          birdRef.current.position.y = -0.01;
-      }, 6000);
-    }
-
-  })
 
   // 草↓
   useFrame((state, delta) => {
@@ -83,6 +77,8 @@ const Basic: FC<{ deviceEvent: DeviceOrientationEvent | null }> = ({ deviceEvent
       sphere.position.lerp(targetPosition, 0.05);
       if (sphere.position.distanceTo(targetPosition) < 0.1) {
         scene.remove(sphere);
+        setHappyFlag(true)
+
         setGrassAnimation(prev => ({ ...prev, isActive: false, sphere: null }));
       }
     }
@@ -112,29 +108,27 @@ const Basic: FC<{ deviceEvent: DeviceOrientationEvent | null }> = ({ deviceEvent
       <group rotation={[0, 0, 0]} position={[0, 0, 0]}>
         {userData?.pets.map((pet, i) => {
           const numCats = userData.pets.length
-          const RADIUS = 2.5
           const angle = (i / numCats) * 2 * Math.PI;
           const x = Math.cos(angle) * RADIUS;
           const z = Math.sin(angle) * RADIUS;
           const position = new THREE.Vector3(x, 0.4, z);
 
           return (
-            <mesh ref={birdRef} key={pet.Language} position={[x, 0, z]} rotation={[0, Math.atan2(-x, -z) + Math.PI, 0]}>
+            <mesh name={pet.Language} ref={birdRef} key={pet.Language} position={[x, 0, z]} rotation={[0, Math.atan2(-x, -z) + Math.PI, 0]}>
               <CharacterModel vrmFile={friendshipGage(pet.FriendshipLevel)} onClickEvent={() => touchPetHandler(pet, position)} />
               <Text
-                position={[0, -0.2, 0]} // キャラクターの下に表示
+                position={[0, -0.2, 0]}
                 rotation={[0, Math.PI, 0]}
                 fontSize={0.2}
-                color="green" // テキストの色
-                anchorX="center" // テキストを中央揃えに
-                anchorY="middle" // テキストを垂直方向の中央に配置
+                color="green"
+                anchorX="center"
+                anchorY="middle"
               >
                 {pet.Language}
               </Text>
             </mesh>
           )
         })}
-        {/* {catModels} */}
       </group>
     </>
   )
