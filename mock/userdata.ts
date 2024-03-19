@@ -1,4 +1,6 @@
-export const userData = {
+import { FetchedData } from "@/interfaces/types";
+
+export const DUMMY_USER_DATA:FetchedData = {
   "user": {
     "GithubID": "Tanakaryuki",
     "DisplayName": "Tanaka ryuki",
@@ -7,31 +9,31 @@ export const userData = {
   "pets": [
     {
       "Language": "python",
-      "HungerLevel": "100",
-      "FriendshipLevel": "100",
-      "EscapeNum": "3",
-      "BaitsNum": "3"
+      "HungerLevel": 10,
+      "FriendshipLevel": 100,
+      "EscapeNum": 3,
+      "BaitsNum": 3
     },
     {
       "Language": "go",
-      "HungerLevel": "100",
-      "FriendshipLevel": "100",
-      "EscapeNum": "3",
-      "BaitsNum": "3"
+      "HungerLevel": 30,
+      "FriendshipLevel": 30,
+      "EscapeNum": 3,
+      "BaitsNum": 3
     },
     {
-      "Language": "rust",
-      "HungerLevel": "100",
-      "FriendshipLevel": "100",
-      "EscapeNum": "3",
-      "BaitsNum": "3"
+      "Language": "Rust",
+      "HungerLevel": 80,
+      "FriendshipLevel": 10,
+      "EscapeNum": 3,
+      "BaitsNum": 3
     },
     {
-      "Language": "javascript",
-      "HungerLevel": "100",
-      "FriendshipLevel": "100",
-      "EscapeNum": "3",
-      "BaitsNum": "3"
+      "Language": "JavaScript",
+      "HungerLevel": 100,
+      "FriendshipLevel": 10,
+      "EscapeNum": 3,
+      "BaitsNum": 3
     }
   ],
   "followers": [
