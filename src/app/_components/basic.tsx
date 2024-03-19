@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, useRef } from 'react'
+import { FC, useRef, useState } from 'react'
 import { DeviceOrientationControls, OrbitControls, useHelper } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 
@@ -17,14 +17,17 @@ import { Pet } from '@/interfaces/types'
 const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
   const boxRef = useRef<THREE.Mesh>(null)
   const catRef = useRef<THREE.Mesh>(null)
+  const birdRef = useRef<THREE.Mesh>(null)
   useSceneBackground();
   useLookAtCenter();
   const { directionalLight } = useLightHelper();
   const [currentModalContent, setCurrentModalContent] = useAtom(CURRENT_MODAL)
   const [userData, setUserData] = useAtom(USER_DATA_ATOM)
+  const [happyFlag, setHappyFlag] = useState(false)
 
   const touchPetHandler = (pet:Pet) =>{
     setCurrentModalContent(pet)
+    setHappyFlag(true)
   }
 
   // const catModels = [];
@@ -64,6 +67,20 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
       // Y回転
       catRef.current.rotation.y += delta
      }  
+     if(birdRef.current && happyFlag){
+      const amplitude = 0.2; // ジャンプの振幅
+
+      const y1 = Math.sin(time * 5) * 0.5+1 ; // 最初のジャンプ
+      const y2 = Math.sin((time - 0.5) * 5) * 0.5 + 1; // 2回目のジャンプ
+
+      birdRef.current.position.y = Math.max(y1-1, y2-1); // ジャンプの高さを適用する
+      setTimeout(() => {
+        setHappyFlag(false); // 3秒後に flg を true に設定
+        if(birdRef.current)
+    	    birdRef.current.position.y = -0.01;
+      }, 6000);
+     }
+
   })
 
   return (
@@ -95,7 +112,7 @@ const Basic:FC<{deviceEvent:DeviceOrientationEvent|null}> = ({deviceEvent}) => {
           const z = Math.sin(angle) * RADIUS;
 
           return (
-            <mesh key={pet.Language} position={[x, 0, z]} rotation={[0,Math.atan2(-x, -z)+Math.PI,0]}>
+            <mesh ref={birdRef} key={pet.Language} position={[x, 0, z]} rotation={[0,Math.atan2(-x, -z)+Math.PI,0]}>
               <CharacterModel vrmFile='bird0_white.vrm' onClickEvent={()=>touchPetHandler(pet)}/>
             </mesh>
           )
