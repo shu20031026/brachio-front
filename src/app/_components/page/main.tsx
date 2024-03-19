@@ -135,10 +135,10 @@ const Main: FC<Props> = ({ ...props }) => {
                   <p className='px-1 font-bold'>草の所持数</p>
                   <p className='px-1 font-extrabold'>{currentModalContentData?.BaitsNum}個</p>
                 </div>
-                <Button onPress={handleFeeding}></Button>
+                <Button color="success" className='text-white font-bold' onPress={handleFeeding}>草を食べさせる</Button>
               </ModalBody>
               <ModalFooter>
-                <Button color="success" onPress={handleCloseModal}>
+                <Button color="primary" onPress={handleCloseModal}>
                   <p className='text-white font-bold'>とじる</p>
                 </Button>
               </ModalFooter>
