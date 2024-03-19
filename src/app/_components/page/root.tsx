@@ -29,6 +29,7 @@ const Root:FC = () => {
       <div>{JSON.stringify(details?.isNewUser)}</div>
       <div>{details?.profile?.name as string}</div>
       <div>{token}</div>
+      <div>aaa</div>
       <Image src={details?.profile?.avatar_url as string || ""} alt=""/>
 
       <div>
