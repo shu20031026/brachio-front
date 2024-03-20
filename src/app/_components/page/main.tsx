@@ -21,6 +21,7 @@ type Props = {
 // メイン
 const Main: FC<Props> = ({ ...props }) => {
   const { param } = props
+
   const [currentModalContentData, setCurrentModalContentData] = useAtom(CURRENT_MODAL)
   const [deviceOrientation, setDeviceOrientation] = useState<DeviceOrientationEvent | null>(null)
   const API = "https://suited-hopefully-rhino.ngrok-free.app/"
