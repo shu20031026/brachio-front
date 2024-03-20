@@ -1,6 +1,6 @@
 'use client'
 
-import { FC, StrictMode, useEffect, useRef, useState } from 'react'
+import { FC, StrictMode, useEffect, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
 
 import * as THREE from 'three'
@@ -10,6 +10,7 @@ import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Progr
 import { useAtom } from 'jotai'
 import { CURRENT_MODAL, IS_OPEN_MODAL, NOW_FEEDING, USER_DATA_ATOM } from '@/stores/atoms'
 import { DUMMY_USER_DATA } from '../../../../mock/userdata'
+import Image from 'next/image'
 
 type Props = {
   param: string
@@ -25,6 +26,8 @@ const Main: FC<Props> = ({ ...props }) => {
 
   const [userData, setUserData] = useAtom(USER_DATA_ATOM)
   const [isOpenModal, setIsOpenModal] = useAtom(IS_OPEN_MODAL)
+  const [isOpenFFModal, setIsOpenFFModal] = useState<boolean>(false)
+
   // const [data,setData] = useState<any>()
 
   // const testHandler = async () => {
@@ -81,9 +84,20 @@ const Main: FC<Props> = ({ ...props }) => {
 
   return (
     <div className="w-full h-screen overflow-hidden">
-      <div className='w-full flex'>
-        <Button onClick={() => requestDeviceOrientationPermission()}>motion</Button>
-        <p>←iOSの方はこちらをタップ</p>
+      <div className='flex items-center justify-between p-4 bg-gray-800 text-white'>
+        <Image
+          src="/icon-512x512.png"
+          alt="Example Image"
+          sizes='10px'
+          width={50}
+          height={50}
+          className='rounded'
+        />
+        <p>iOSの方は「motion」をタップ</p>
+        <ul className='flex gap-2 space-x-4'>
+          <li><Button onClick={() => requestDeviceOrientationPermission()}>motion</Button></li>
+          <li><button className="flex h-10 items-center rounded bg-primary px-4 text-sm font-medium text-white transition-colors" onClick={() => setIsOpenFFModal(true)}>FF</button></li>
+        </ul>
       </div>
       <StrictMode>
         <Canvas
@@ -146,6 +160,40 @@ const Main: FC<Props> = ({ ...props }) => {
           )}
         </ModalContent>
       </Modal>
+
+      <Modal
+        isOpen={isOpenFFModal}
+        placement="bottom-center"
+        closeButton={<div></div>}
+        hideCloseButton
+      >
+        <ModalContent>
+          {() => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                <p className='text-2xl'>{currentModalContentData?.Language}</p>
+              </ModalHeader>
+              <ModalBody className='text-black'>
+                {userData?.followers.map((follower, index) => (
+                  <div key={index} className="bg-gray-200 p-4 m-2 flex items-center">
+                    <Image src={follower.ImageURL} alt={follower.DisplayName} width={40} height={40} className="rounded-full" />
+                    <div>
+                      <p className="font-bold">{follower.DisplayName}</p>
+                      <p>{follower.GithubID}</p>
+                    </div>
+                  </div>
+                ))}
+              </ModalBody>
+              <ModalFooter>
+                <button color="primary" onClick={() => { setIsOpenFFModal(false) }}>
+                  <p className="flex h-10 items-center rounded bg-primary px-4 text-sm font-medium text-white transition-colors">とじる</p>
+                </button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+
     </div>
   )
 }
